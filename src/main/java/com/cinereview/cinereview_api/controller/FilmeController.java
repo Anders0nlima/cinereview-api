@@ -1,7 +1,8 @@
 package com.cinereview.cinereview_api.controller;
 
+import com.cinereview.cinereview_api.dto.FilmeDTO;
 import com.cinereview.cinereview_api.model.Filme;
-import com.cinereview.cinereview_api.repository.FilmeRepository;
+import com.cinereview.cinereview_api.service.FilmeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,42 +13,43 @@ import java.util.List;
 @RequestMapping("/filmes")
 public class FilmeController {
     @Autowired
-    private FilmeRepository repository;
+    private FilmeService service;
 
     @GetMapping
     public List<Filme> listarTodos() {
-        return repository.findAll();
+        return service.listarTodos();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // Retorna 201 Created
-    public Filme cadastrar(@RequestBody Filme filme) {
-        return repository.save(filme);
+    public Filme cadastrar(@RequestBody FilmeDTO dto) {
+        return service.cadastrar(dto);
     }
 
-    // 3. Buscar por ID (Read)
+
     @GetMapping("/{id}")
     public Filme buscarPorId(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+        return service.buscarPorId(id);
     }
-    // 4. Atualizar (Update) - Tópico 6.1: Verbo PUT
+
+
     @PutMapping("/{id}")
-    public Filme atualizar(@PathVariable Long id, @RequestBody Filme filmeAtualizado) {
-        Filme filmeExistente = repository.findById(id).orElseThrow();
+    public Filme atualizar(@PathVariable Long id, @RequestBody FilmeDTO dto) {
+//        Filme filmeExistente = repository.findById(id).orElseThrow();
+//
+//        filmeExistente.setTitulo(filmeAtualizado.getTitulo());
+//        filmeExistente.setGenero(filmeAtualizado.getGenero());
+//        filmeExistente.setAnoLancamento(filmeAtualizado.getAnoLancamento());
+//        filmeExistente.setDiretor(filmeAtualizado.getDiretor());
 
-        filmeExistente.setTitulo(filmeAtualizado.getTitulo());
-        filmeExistente.setGenero(filmeAtualizado.getGenero());
-        filmeExistente.setAnoLancamento(filmeAtualizado.getAnoLancamento());
-        filmeExistente.setDiretor(filmeAtualizado.getDiretor());
-
-        return repository.save(filmeExistente);
+        return service.atualizar(id, dto);
     }
 
-    // 5. Deletar (Delete) - Tópico 6.1: Verbo DELETE
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // Retorna 204 No Content
     public void deletar(@PathVariable Long id) {
-        repository.deleteById(id);
+        service.deletar(id);
     }
 
 }
